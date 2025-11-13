@@ -1,4 +1,4 @@
-name: Python CI
+name: Python CI/CD Demo
 
 on:
   push:
@@ -31,3 +31,23 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           pytest
+
+  deploy:
+    # 👇 This means: only run this job AFTER the "test" job succeeds
+    needs: test
+
+    # 👇 Only run this for pushes to main (not pull requests)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+      # (We still want the repo in this job)
+        uses: actions/checkout@v4
+
+      - name: Simulate deployment
+        run: |
+          echo "✅ Tests passed. Starting deployment..."
+          echo "🚀 Deploying version from commit: $GITHUB_SHA"
+          echo "✨ (Here is where real deploy commands would go)"
